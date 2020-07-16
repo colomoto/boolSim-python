@@ -1,0 +1,31 @@
+{% set name = "boolsim-python" %}
+{% set version = "9999" %}
+
+package:
+  name: '{{ name|lower }}'
+  version: '{{ version }}'
+
+source:
+  path: ../
+
+build:
+  number: 0
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+  noarch: python
+
+requirements:
+  build:
+    - python
+    - setuptools
+
+  run:
+    - python
+    - colomoto_jupyter
+    - pandas:
+    - boolsim
+
+about:
+  home: https://github.com/pauleve/boolSim-python
+  summary: 'Python interface to boolSim'
+  license_family: LGPL
+  license: LGPL v3+/CeCILL-C
