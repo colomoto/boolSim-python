@@ -68,8 +68,8 @@ def attractors(bn, update_mode="asynchronous"):
     `update_mode` (either ``"asynchronous"`` or ``"synchronous"``).
 
     `bn` can be either:
-    - ``colomoto.minibn.BooleanNetwork``, ``biolqm``, or ``ginsim`` object
-    - filename in SBML-qual or boolSim format.
+        - ``colomoto.minibn.BooleanNetwork``, ``biolqm``, or ``ginsim`` object
+        - filename in SBML-qual or boolSim format.
 
     Returns a list of ``colomoto.types.State``,
         ``colomoto.types.TrapSpaceAttractor``, or
