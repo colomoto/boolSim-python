@@ -1,4 +1,11 @@
+"""
+This Python module is an interface to the software tools boolSim
+(https://www.vital-it.ch/research/software/boolSim) for the computation of
+attractors in synchronous and asynchronous Boolean Networks.
 
+Examples can be found at
+https://nbviewer.jupyter.org/github/pauleve/boolSim-python/tree/main/examples/.
+"""
 import os
 import shutil
 import subprocess
@@ -53,6 +60,19 @@ def parse_attractor(filename):
     return tps[0]
 
 def attractors(bn, update_mode="asynchronous"):
+    """
+    Compute the attractors of the given Boolean network `bn` using the
+    `update_mode` (either ``"asynchronous"`` or ``"synchronous"``).
+
+    `bn` can be either:
+    - ``colomoto.minibn.BooleanNetwork``, ``biolqm``, or ``ginsim`` object
+    - filename in SBML-qual or boolSim format.
+
+    Returns a list of ``colomoto.types.State``,
+        ``colomoto.types.TrapSpaceAttractor``, or
+        ``colomoto.types.TrapSpacesAttractor``, depending on the kind of
+        attractors.
+    """
     output = tempfile.mkdtemp(prefix="BoolSim-")
     try:
         execute(bn, update_mode, output)
