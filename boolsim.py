@@ -10,6 +10,7 @@ import os
 import shutil
 import subprocess
 import tempfile
+import sys
 
 import pandas as pd
 
@@ -30,28 +31,30 @@ def execute(model, update_mode, output):
         biolqm = sys.modules["biolqm"]
         if biolqm.is_biolqm_object(model):
             model = biolqm_import(biolqm, model)
-    elif "ginsim" in sys.modules:
+    if "ginsim" in sys.modules:
         ginsim = sys.modules["ginsim"]
         if ginsim.is_ginsim_object(model):
-            model = ginsim.to_biolqm(model)
             biolqm = import_colomoto_tool("biolqm")
+            model = ginsim.to_biolqm(model)
             model = biolqm_import(biolqm, model)
+    assert isinstance(model, str), "unsupported type of model input"
 
     update_mode = "3" if update_mode.startswith("async") else "1"
     args = ["boolSim", "-f", model,
                 "-p", update_mode,
                 "-o", os.path.join(output, "out")]
-    print(args)
     subprocess.check_call(args)
 
 def parse_attractor(filename):
-    df = pd.read_fwf(filename, index_col=0)
-    del df["No."]
+    with open(filename) as fp:
+        fp.readline() # skip header
+        df = pd.read_fwf(fp, index_col=0, header=None)
+        df = df.replace(2, "*")
     tps = []
     for col in df.columns:
-        tp = df[col]
-        if 2 in tp:
-            tp = TrapSpaceAttractor(tp.replace(2, "*"))
+        tp = df[col].to_dict()
+        if "*" in tp.values():
+            tp = TrapSpaceAttractor(tp)
         else:
             tp = State(tp)
         tps.append(tp)
@@ -77,7 +80,7 @@ def attractors(bn, update_mode="asynchronous"):
     try:
         execute(bn, update_mode, output)
         return [parse_attractor(os.path.join(output, out))\
-                    for out in os.listdir(output)]
+                    for out in os.listdir(output) if out.startswith("out_")]
     finally:
         shutil.rmtree(output)
 
