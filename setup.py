@@ -7,7 +7,7 @@ setup(name=NAME,
     version='9999',
     author = "Loïc Paulevé",
     author_email = "loic.pauleve@labri.fr",
-    url = "https://github.com/pauleve/boolSim-python",
+    url = "https://github.com/colomoto/boolSim-python",
     description = "Python interface to boolSim",
     install_requires = [
         "colomoto_jupyter",

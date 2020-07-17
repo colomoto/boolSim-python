@@ -25,7 +25,7 @@ requirements:
     - boolsim
 
 about:
-  home: https://github.com/pauleve/boolSim-python
+  home: https://github.com/colomoto/boolSim-python
   summary: 'Python interface to boolSim'
   license_family: LGPL
   license: LGPL v3+/CeCILL-C

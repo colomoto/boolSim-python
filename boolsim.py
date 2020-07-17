@@ -4,7 +4,7 @@ This Python module is an interface to the software tools boolSim
 attractors in synchronous and asynchronous Boolean Networks.
 
 Examples can be found at
-https://nbviewer.jupyter.org/github/pauleve/boolSim-python/tree/main/examples/.
+https://nbviewer.jupyter.org/github/colomoto/boolSim-python/tree/main/examples/.
 """
 import os
 import shutil
