@@ -54,12 +54,12 @@ def parse_attractor(filename):
     for col in df.columns:
         tp = df[col].to_dict()
         if "*" in tp.values():
-            tp = TrapSpaceAttractor(tp)
+            tp = Hypercube(tp)
         else:
             tp = State(tp)
         tps.append(tp)
     if len(tps) > 1:
-        return TrapSpacesAttractor(tps)
+        return HypercubeCollection(tps)
     return tps[0]
 
 def attractors(bn, update_mode="asynchronous"):
@@ -72,8 +72,8 @@ def attractors(bn, update_mode="asynchronous"):
         - filename in SBML-qual or boolSim format.
 
     Returns a list of ``colomoto.types.State``,
-        ``colomoto.types.TrapSpaceAttractor``, or
-        ``colomoto.types.TrapSpacesAttractor``, depending on the kind of
+        ``colomoto.types.Hypercube``, or
+        ``colomoto.types.HypercubeCollection``, depending on the kind of
         attractors.
     """
     output = tempfile.mkdtemp(prefix="BoolSim-")
