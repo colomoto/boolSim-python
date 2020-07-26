@@ -73,10 +73,8 @@ def attractors(bn, update_mode="asynchronous"):
         - ``colomoto.minibn.BooleanNetwork``, ``biolqm``, or ``ginsim`` object
         - filename in SBML-qual or boolSim format.
 
-    Returns a list of ``colomoto.types.State``,
-        ``colomoto.types.Hypercube``, or
-        ``colomoto.types.HypercubeCollection``, depending on the kind of
-        attractors.
+    Returns a list of ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection``, depending on the kind of attractors.
     """
     output = tempfile.mkdtemp(prefix="BoolSim-")
     try:
@@ -97,12 +95,10 @@ def reachable(bn, init, update_mode="asynchronous"):
         - filename in SBML-qual or boolSim format.
 
     `init` can be either a `dict`, ``colomoto.types.State``,
-        ``colomoto.types.Hypercube``, or
-        ``colomoto.types.HypercubeCollection``.
+    ``colomoto.types.Hypercube``, or ``colomoto.types.HypercubeCollection``.
 
-    Returns a ``colomoto.types.State``,
-        ``colomoto.types.Hypercube``, or
-        ``colomoto.types.HypercubeCollection``, depending on the result.
+    Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection``, depending on the result.
     """
     if not hasattr(init, "as_dataframe"):
         init = State(init)
