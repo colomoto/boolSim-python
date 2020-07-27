@@ -20,8 +20,8 @@ requirements:
 
   run:
     - python
-    - colomoto_jupyter
-    - pandas:
+    - colomoto_jupyter >0.6.5
+    - pandas
     - boolsim
 
 about:
