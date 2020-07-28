@@ -84,6 +84,13 @@ def attractors(bn, update_mode="asynchronous"):
     finally:
         shutil.rmtree(output)
 
+def write_statefile(states, filename):
+    if not hasattr(states, "as_dataframe"):
+        states = State(states)
+    states = states.as_dataframe().replace("*", 2)
+    states.T.to_csv(filename, sep="\t", header=None)
+    return filename
+
 def reachable(bn, init, update_mode="asynchronous"):
     """
     Compute the reachable states within the given Boolean network `bn` from the
@@ -100,14 +107,55 @@ def reachable(bn, init, update_mode="asynchronous"):
     Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
     ``colomoto.types.HypercubeCollection``, depending on the result.
     """
-    if not hasattr(init, "as_dataframe"):
-        init = State(init)
-    init = init.as_dataframe().replace("*", 2)
     wd = tempfile.mkdtemp(prefix="BoolSim-")
     try:
         initfile = os.path.join(wd, "initial_states.txt")
-        init.T.to_csv(initfile, sep="\t")
+        write_statefile(init, initfile)
         execute(bn, update_mode, wd, init=initfile)
         return parse_states(os.path.join(wd, "out.txt"))
     finally:
         shutil.rmtree(wd)
+
+def setutils(operation, *states):
+    assert operation in ["union", "intersection", "difference"]
+    wd = tempfile.mkdtemp(prefix="BoolSim-")
+    try:
+        files = [write_statefile(s, os.path.join(wd, f"file{i}.txt"))
+                    for i, s in enumerate(states)]
+        output = os.path.join(wd, "out.txt")
+        subprocess.check_call(["boolSim_setutils", "-o", output, operation] \
+                + files)
+        return parse_states(output)
+    finally:
+        shutil.rmtree(wd)
+
+def difference(A, B, *C):
+    """
+    Perform difference between sets of states specified either as
+    `dict`, ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection`` objects.
+
+    Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection``, depending on the result.
+    """
+    return setutils("difference", A, B, *C)
+def intersection(A, B, *C):
+    """
+    Perform intersection between sets of states specified either as
+    `dict`, ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection`` objects.
+
+    Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection``, depending on the result.
+    """
+    return setutils("intersection", A, B, *C)
+def union(A, B, *C):
+    """
+    Perform union between sets of states specified either as
+    `dict`, ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection`` objects.
+
+    Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
+    ``colomoto.types.HypercubeCollection``, depending on the result.
+    """
+    return setutils("union", A, B, *C)
