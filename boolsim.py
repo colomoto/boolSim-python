@@ -18,7 +18,7 @@ from colomoto.minibn import BooleanNetwork
 from colomoto.types import *
 from colomoto_jupyter import import_colomoto_tool
 
-def execute(model, update_mode, output, init=None):
+def execute(model, update_mode, output, init=None, max_iterations=0):
     if isinstance(model, BooleanNetwork):
         model = model.to_biolqm()
 
@@ -45,6 +45,8 @@ def execute(model, update_mode, output, init=None):
                 "-o", os.path.join(output, "out")]
     if init:
         args += ["-i", init]
+    if max_iterations:
+        args += ["-n", str(max_iterations)]
     subprocess.check_call(args)
 
 def parse_states(filename):
@@ -91,7 +93,7 @@ def write_statefile(states, filename):
     states.T.to_csv(filename, sep="\t", header=None)
     return filename
 
-def reachable(bn, init, update_mode="asynchronous"):
+def reachable(bn, init, max_iterations=0, update_mode="asynchronous"):
     """
     Compute the reachable states within the given Boolean network `bn` from the
     initial state(s) `init`, using `update_mode` (either ``"asynchronous"`` or
@@ -111,7 +113,8 @@ def reachable(bn, init, update_mode="asynchronous"):
     try:
         initfile = os.path.join(wd, "initial_states.txt")
         write_statefile(init, initfile)
-        execute(bn, update_mode, wd, init=initfile)
+        execute(bn, update_mode, wd, init=initfile,
+                max_iterations=max_iterations)
         return parse_states(os.path.join(wd, "out.txt"))
     finally:
         shutil.rmtree(wd)
