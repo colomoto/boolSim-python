@@ -10,7 +10,7 @@ setup(name=NAME,
     url = "https://github.com/colomoto/boolSim-python",
     description = "Python interface to boolSim",
     install_requires = [
-        "colomoto_jupyter > 0.6.5",
+        "colomoto_jupyter",
         "pandas",
     ],
     classifiers=[
