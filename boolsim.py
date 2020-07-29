@@ -93,7 +93,7 @@ def write_statefile(states, filename):
     states.T.to_csv(filename, sep="\t", header=None)
     return filename
 
-def reachable(bn, init, max_iterations=0, update_mode="asynchronous"):
+def reachable(bn, init, update_mode="asynchronous", max_iterations=0):
     """
     Compute the reachable states within the given Boolean network `bn` from the
     initial state(s) `init`, using `update_mode` (either ``"asynchronous"`` or
