@@ -13,6 +13,7 @@ import tempfile
 import sys
 
 import pandas as pd
+import pandas.errors
 
 from colomoto.minibn import BooleanNetwork
 from colomoto.types import *
@@ -47,12 +48,16 @@ def execute(model, update_mode, output, init=None, max_iterations=0):
         args += ["-i", init]
     if max_iterations:
         args += ["-n", str(max_iterations)]
-    subprocess.check_call(args)
+    subprocess.check_call(args, stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL)
 
 def parse_states(filename):
     with open(filename) as fp:
         fp.readline() # skip header
-        df = pd.read_fwf(fp, index_col=0, header=None)
+        try:
+            df = pd.read_fwf(fp, index_col=0, header=None)
+        except pandas.errors.EmptyDataError:
+            return None
         df = df.replace(2, "*")
     tps = []
     for col in df.columns:
@@ -127,7 +132,7 @@ def setutils(operation, *states):
                     for i, s in enumerate(states)]
         output = os.path.join(wd, "out.txt")
         subprocess.check_call(["boolSim_setutils", "-o", output, operation] \
-                + files)
+                + files, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         return parse_states(output)
     finally:
         shutil.rmtree(wd)
@@ -139,7 +144,8 @@ def difference(A, B, *C):
     ``colomoto.types.HypercubeCollection`` objects.
 
     Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
-    ``colomoto.types.HypercubeCollection``, depending on the result.
+    ``colomoto.types.HypercubeCollection`` objects, or ``None``, depending on
+    the result.
     """
     return setutils("difference", A, B, *C)
 def intersection(A, B, *C):
@@ -149,7 +155,8 @@ def intersection(A, B, *C):
     ``colomoto.types.HypercubeCollection`` objects.
 
     Returns a ``colomoto.types.State``, ``colomoto.types.Hypercube``, or
-    ``colomoto.types.HypercubeCollection``, depending on the result.
+    ``colomoto.types.HypercubeCollection`` objects, or ``None``, depending on
+    the result.
     """
     return setutils("intersection", A, B, *C)
 def union(A, B, *C):
